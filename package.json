@@ -1,6 +1,6 @@
 {
   "name": "River",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "Flow control that has nothing to do with nature's rivers.",
   "main": "lib/River.js",
   "scripts": {
