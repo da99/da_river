@@ -1,6 +1,6 @@
 {
   "name": "River",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Flow control that has nothing to do with nature's rivers.",
   "main": "lib/River.js",
   "scripts": {
@@ -16,10 +16,11 @@
   "author": "da99",
   "license": "MIT",
   "readmeFilename": "README.md",
-  "gitHead": "aa24c91f6358df94e3981f7b4aa3dd8f95252def"
-  , "engines": { "node": "0.x.x" }
-  , "dependencies": {
-    "underscore" : "1.x.x"
+  "gitHead": "aa24c91f6358df94e3981f7b4aa3dd8f95252def",
+  "engines": {
+    "node": "0.x.x"
+  },
+  "dependencies": {
+    "underscore": "1.x.x"
   }
-
 }
