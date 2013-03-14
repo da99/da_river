@@ -1,0 +1,21 @@
+{
+  "name": "River",
+  "version": "0.1.0",
+  "description": "Flow control that has nothing to do with nature's rivers.",
+  "main": "lib/River.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/da99/River.js.git"
+  },
+  "keywords": [
+    "da99"
+  ],
+  "engines": [ "node": "0.x.x"]
+  "author": "da99",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "aa24c91f6358df94e3981f7b4aa3dd8f95252def"
+}
