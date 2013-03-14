@@ -1,7 +1,7 @@
 
 var _     = require('underscore')
 , assert  = require('assert')
-, River   = require('River/lib/River').River
+, River   = require('da_river/lib/River').River
 ;
 
 function vals(river) {
