@@ -90,7 +90,7 @@ describe( 'River', function () {
       r
       .set('error', function (flow) {
         var river = flow.river;
-        results.push([river.about_error.type, river.about_error.msg.message]);
+        results.push([river.error.type, river.error.message]);
       })
 
       .job('emit error', 1, function (j) { j.finish('error', "done"); })
@@ -111,7 +111,7 @@ describe( 'River', function () {
       r
       .set('not_valid', function (flow) {
         var river = flow.river;
-        results.push([river.about_error.type, river.about_error.msg.message]);
+        results.push([river.error.type, river.error.message]);
       })
 
       .job('emit error', 1, function (j) { j.finish('not_valid', "done"); })
@@ -142,7 +142,7 @@ describe( 'River', function () {
       var r = River.new(null);
       r
       .next('invalid', function (j) {
-        assert.equal(j.job.about_error.msg.message, 'don');
+        assert.equal(j.job.error.message, 'don');
         assert.equal(j.job.is_job, true);
         d();
       })
@@ -192,7 +192,7 @@ describe( 'River', function () {
       River.new(null)
       .set('error', function (flow) {
         var r = flow.river;
-        assert.equal(r.about_error.msg.message, 'reached');
+        assert.equal(r.error.message, 'reached');
       })
       .job(function (j) {
 
@@ -338,7 +338,7 @@ describe( 'River', function () {
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
      River.new(null)
      .next('not_found', function (j) {
-        assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: false");
+        assert.equal(j.job.error.message, "At least one reply required. Value: false");
         done();
      })
      .job_must_find(function (j) {
@@ -351,7 +351,7 @@ describe( 'River', function () {
     it( 'finishes with error not_found if reply is: [].length === 0', function (done) {
      River.new(null)
      .next('not_found', function (j) {
-        assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: []");
+        assert.equal(j.job.error.message, "At least one reply required. Value: []");
         done();
      })
      .job_must_find(function (j) {

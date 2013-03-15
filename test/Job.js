@@ -18,7 +18,7 @@ describe( 'Job', function () {
       .job('runs', 2, function (j) { j.finish(j.id) })
 
       .next('invalid', function (j) {
-        assert(j.job.about_error.msg, 3);
+        assert(j.job.error.message, 3);
       })
 
       .job('runs', 3, function (j) {
@@ -33,7 +33,7 @@ describe( 'Job', function () {
       });
 
       assert.deepEqual(vals(r.replys), [1,2]);
-      assert.equal(job.about_error.msg.message, 3);
+      assert.equal(job.error.message, 3);
     });
   }); // === describe
 
@@ -46,7 +46,7 @@ describe( 'Job', function () {
       .job('emit not found', 1, function (j) {
         j.set('not_found', function (flow) {
           var j = flow.job;
-          results.push([j.id, j.about_error.msg.message]);
+          results.push([j.id, j.error.message]);
         })
         j.finish('not_found', "done");
       })
@@ -66,7 +66,7 @@ describe( 'Job', function () {
       var results = null;
       River.new(null)
       .set('error', function (flow) {
-        results = flow.river.about_error.msg;
+        results = flow.river.error;
       })
       .job(function (j) { j.finish(1); })
       .job(function (j) { j.finish('error', "This is error."); })
