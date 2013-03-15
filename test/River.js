@@ -345,13 +345,26 @@ describe( 'River', function () {
 
   describe( '.job_must_find', function () {
 
+    it( 'uses job group and id (when specified) in error message', function (done) {
+      River.new(null)
+      .next('not_found', function (j) {
+        assert.equal(j.job.error.message, "Customer, 451, not found.");
+        done();
+      })
+      .job_must_find('Customer', 451, function (j) {
+        process.nextTick(function () {
+          j.finish(false);
+        });
+      }).run();
+    });
+
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
      River.new(null)
      .next('not_found', function (j) {
-        assert.equal(j.job.error.message, "At least one reply required. Value: false");
+        assert.equal(j.job.error.message, "Customer, 1, not found.");
         done();
      })
-     .job_must_find(function (j) {
+     .job_must_find('Customer', 1, function (j) {
        process.nextTick(function () {
          j.finish(false);
        });
