@@ -320,8 +320,8 @@ describe( 'River', function () {
 
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
      River.new(null)
-     .set('not_found', function (j) {
-        assert.equal(j.river.last_reply(), false);
+     .next('not_found', function (j) {
+        assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: false");
         done();
      })
      .job_not_empty(function (j) {
@@ -333,8 +333,8 @@ describe( 'River', function () {
 
     it( 'finishes with error not_found if reply is: [].length === 0', function (done) {
      River.new(null)
-     .set('not_found', function (j) {
-        assert.equal(j.river.last_reply().length, 0);
+     .next('not_found', function (j) {
+        assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: []");
         done();
      })
      .job_not_empty(function (j) {
