@@ -2,18 +2,10 @@
 var _     = require('underscore')
 , assert  = require('assert')
 , River   = require('da_river/lib/River').River
+, h       = require('da_river/test/helpers/main')
 ;
 
-function vals(river) {
-  if (_.isArray(river))
-    var arr = river;
-  else
-    var arr = river.replys;
-
-  return _.map(arr, function (v) {
-    return v.val;
-  });
-}
+var vals = h.vals;
 
 describe( 'River', function () {
 
@@ -158,57 +150,6 @@ describe( 'River', function () {
       .run();
     });
 
-  }); // === describe
-
-  describe( 'job .finish invalid', function () {
-    it( 'stops river', function () {
-      var r = River.new(null);
-      var job = null;
-      r
-      .job('runs', 1, function (j) { j.finish(j.id); })
-      .job('runs', 2, function (j) { j.finish(j.id) })
-
-      .next('invalid', function (j) {
-        assert(j.job.about_error.msg, 3);
-      })
-
-      .job('runs', 3, function (j) {
-        job = j;
-        j.finish('not_valid', j.id);
-      })
-
-      .job('runs', 4, function (j) { j.finish(j.id) })
-
-      .run(function () {
-        throw new Error('Should not get here.');
-      });
-
-      assert.deepEqual(vals(r.replys), [1,2]);
-      assert.equal(job.about_error.msg.message, 3);
-    });
-  }); // === describe
-
-
-  describe( 'job .finish not_found', function () {
-    it( 'stops river', function () {
-      var results = [];
-      var r = River.new(null);
-      r
-      .job('emit not found', 1, function (j) {
-        j.set('not_found', function (flow) {
-          var j = flow.job;
-          results.push([j.id, j.about_error.msg.message]);
-        })
-        j.finish('not_found', "done");
-      })
-      .job('emit error', 2, function (j) {
-        throw new Error('This is not supposed to be run after .not_found().');
-      })
-      .run(function (r) {
-        throw new Error('This is not supposed to be run after .not_found().');
-      });
-      assert.deepEqual(results, [[1, 'done']]);
-    });
   }); // === describe
 
   describe( 'group/id', function () {
@@ -375,6 +316,44 @@ describe( 'River', function () {
 
   }); // === end desc
 
+  describe( '.job_not_empty', function () {
+
+    it( 'finishes with error not_found if reply is: !reply == true', function (done) {
+     River.new(null)
+     .set('not_found', function (j) {
+        assert.equal(j.river.last_reply(), false);
+        done();
+     })
+     .job_not_empty(function (j) {
+       process.nextTick(function () {
+         j.finish(false);
+       });
+     }).run();
+    });
+
+    it( 'finishes with error not_found if reply is: [].length === 0', function (done) {
+     River.new(null)
+     .set('not_found', function (j) {
+        assert.equal(j.river.last_reply().length, 0);
+        done();
+     })
+     .job_not_empty(function (j) {
+       process.nextTick(function () {
+         j.finish([]);
+       });
+     }).run();
+    });
+
+    it( 'finishs with reply if reply: !!reply === true', function () {
+     var r = River.new(null)
+     .job_not_empty(function (j) {
+       j.finish("hoppe");
+     }).run();
+     assert.equal(r.last_reply(), 'hoppe');
+    });
+
+  }); // === end desc
+
   describe( '.first_reply', function () {
     it( 'returns .val of first reply of .replys', function () {
       var r = River.new(null)
@@ -394,60 +373,6 @@ describe( 'River', function () {
       .job(function (j) { j.finish(3); })
       .run();
       assert.equal(r.last_reply(), 3);
-    });
-  }); // === end desc
-
-  describe( 'job .finish', function () {
-    it( 'turns string msg into an Error', function () {
-      var results = null;
-      River.new(null)
-      .set('error', function (flow) {
-        results = flow.river.about_error.msg;
-      })
-      .job(function (j) { j.finish(1); })
-      .job(function (j) { j.finish('error', "This is error."); })
-      .job(function (j) { j.finish(3); })
-      .run();
-      assert.equal(results.message, 'This is error.');
-    });
-  }); // === end desc
-
-  describe( 'job .reply', function () {
-
-    it( 'runs function before finish function', function () {
-      var r = [];
-      River.new(null)
-      .job(function (j) {
-        j.reply(function (j, result) {
-          r.push(result);
-          return j.finish(2);
-        });
-
-        j.finish(1);
-      }).run();
-
-      assert.deepEqual(r, [1]);
-    });
-
-    it( 'saves each value to replys Array', function () {
-      var r = [];
-
-      River.new(null)
-
-      .job(function (j) {
-
-        j.reply(function (j, result) {
-          r.push(result);
-          return j.finish(2);
-        });
-
-        j.finish(1);
-      })
-
-      .job(function (j, last) { r.push(last); })
-      .run();
-
-      assert.deepEqual(r, [1, 2]);
     });
   }); // === end desc
 
