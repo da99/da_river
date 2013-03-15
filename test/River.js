@@ -9,55 +9,65 @@ var vals = h.vals;
 
 describe( 'River', function () {
 
-  it( 'runs job after the previous one finishes', function (done) {
-    var r = River.new(null);
-    var results = [];
+  describe( '.run', function () {
+    it( 'runs job after the previous one finishes', function (done) {
+      var r = River.new(null);
+      var results = [];
 
-    r
-    .job('del: ', 'job-keys', function (j) {
-      process.nextTick(function (){
-        j.finish(1);
+      r
+      .job('del: ', 'job-keys', function (j) {
+        process.nextTick(function (){
+          j.finish(1);
+        });
+      })
+
+      .job('pop: ', 0, function (j) { j.finish(2); })
+
+      .job('insert: ', 1, function (j) {
+        process.nextTick( function() {
+          j.finish(3);
+        });
+      })
+
+      .job('pop: ', 1, function (j) { j.finish(4); })
+
+      .run(function () {
+        assert.deepEqual([1, 2, 3, 4], vals(r.replys));
+        done();
+      })
+      ;
+
+    });
+
+    it( 'throws Error if no error handler defined', function () {
+      var results = [];
+      var r = River.new(null);
+      r
+      .job('throw', 'done', function (j) {
+
+        var e = null;
+        try {
+          j.finish('something', 'done');
+        } catch(err) {
+          e = err;
+        }
+        assert.equal(e.type + ': ' + e.message, 'something: done');
+      })
+      .run();
+    });
+
+    it( 'passes last value to on_finish callbacks', function () {
+      var result = "none";
+      River.new(null)
+      .job(function (j) {
+        j.finish('reached');
+      })
+      .run(function (j, last) {
+        result = last;
       });
-    })
-
-    .job('pop: ', 0, function (j) {
-      j.finish(2);
-    })
-
-    .job('insert: ', 1, function (j) {
-      process.nextTick( function() {
-        j.finish(3);
-      });
-    })
-
-    .job('pop: ', 1, function (j) {
-      j.finish(4);
-    })
-
-    .run(function () {
-      assert.deepEqual([1, 2, 3, 4], vals(r.replys));
-      done();
-    })
-    ;
-
-  });
-
-  it( 'throws Error if no error handler defined', function () {
-    var results = [];
-    var r = River.new(null);
-    r
-    .job('throw', 'done', function (j) {
-
-      var e = null;
-      try {
-        j.finish('something', 'done');
-      } catch(err) {
-        e = err;
-      }
-      assert.equal(e.type + ': ' + e.message, 'something: done');
-    })
-    .run();
-  });
+      assert.equal(result, "reached");
+    });
+  }); // === end desc
 
   describe( '.before_each', function () {
 
