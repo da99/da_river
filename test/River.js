@@ -316,7 +316,7 @@ describe( 'River', function () {
 
   }); // === end desc
 
-  describe( '.job_not_empty', function () {
+  describe( '.job_must_find', function () {
 
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
      River.new(null)
@@ -324,7 +324,7 @@ describe( 'River', function () {
         assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: false");
         done();
      })
-     .job_not_empty(function (j) {
+     .job_must_find(function (j) {
        process.nextTick(function () {
          j.finish(false);
        });
@@ -337,7 +337,7 @@ describe( 'River', function () {
         assert.equal(j.job.about_error.msg.message, "At least one reply required. Value: []");
         done();
      })
-     .job_not_empty(function (j) {
+     .job_must_find(function (j) {
        process.nextTick(function () {
          j.finish([]);
        });
@@ -346,7 +346,7 @@ describe( 'River', function () {
 
     it( 'finishs with reply if reply: !!reply === true', function () {
      var r = River.new(null)
-     .job_not_empty(function (j) {
+     .job_must_find(function (j) {
        j.finish("hoppe");
      }).run();
      assert.equal(r.last_reply(), 'hoppe');
