@@ -171,6 +171,23 @@ describe( 'River', function () {
 
   describe( 'inheriting a job', function () {
 
+    it( 'extracts ancestor given an array/arguments', function () {
+
+      var b = null;
+      var a = River.new(null)
+      .job(function (j) {
+        River.new(arguments)
+        .job(function (j) {
+          b = j.river.parent_job.river;
+          j.finish("done");
+        })
+        .run();
+      });
+
+      a.run();
+      assert.deepEqual(a, b);
+    });
+
     it( 'runs the events of the previous job.river', function () {
       River.new(null)
       .set('error', function (flow) {
