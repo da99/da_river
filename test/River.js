@@ -432,7 +432,18 @@ describe( 'River', function () {
   }); // === end desc
 
   describe( '.replys_for', function () {
-    it( 'returns value for givin group when no id specified', function () {
+    it( 'returns values for givin group and id', function () {
+      River.new(null)
+      .job('g', 1, function (j) { j.finish('one'); })
+      .job('g', 2, function (j) { j.finish('dos'); })
+      .job('g', 3, function (j) { j.finish('tres'); })
+      .run(function (j) {
+        var r = j.river;
+        assert.deepEqual(r.replys_for('g', 2), ['dos']);
+      });
+    });
+
+    it( 'returns values for givin group when no id specified', function () {
       River.new(null)
       .job('g', 1, function (j) { j.finish('one'); })
       .job('g', 2, function (j) { j.finish('dos'); })
