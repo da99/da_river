@@ -132,5 +132,23 @@ describe( 'Job', function () {
     process.nextTick(function () { r.run(); });
   });
 
+  describe( 'error callbacks', function () {
+
+    it( 'passes error to callback as 2nd argument', function (done) {
+      var r = River.new()
+      .job(function (j) {
+        j.set('no_no', function (j, err) {
+          assert.equal(err.message, "This is my error.");
+          done();
+        });
+        j.finish('no_no', 'This is my error.');
+      });
+
+      process.nextTick(function () {
+        r.run();
+      });
+      
+    });
+  }); // === end desc
 
 }); // === describe
