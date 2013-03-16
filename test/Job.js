@@ -115,5 +115,22 @@ describe( 'Job', function () {
     });
   }); // === end desc
 
+  it( 'stops running any reply callbacks once error is found', function (done) {
+    var r = River.new(null)
+    .next('not_found', function (j) {
+      assert.equal(j.job.error.message, "C")
+      done();
+    })
+    .job_must_find(function (j) {
+      j.reply(function (j) { throw new Error("Should not be reached."); });
+      j.reply(function (j) { j.finish('not_found', "C"); });
+      j.reply(function (j) { j.finish(undefined); });
+      j.reply(function (j) { j.finish("a"); });
+      j.finish("0");
+    });
+
+    process.nextTick(function () { r.run(); });
+  });
+
 
 }); // === describe
