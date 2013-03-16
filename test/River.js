@@ -416,4 +416,19 @@ describe( 'River', function () {
     });
   }); // === end desc
 
+  describe( '.reply_for', function () {
+    it( 'returns value for givin group and id', function () {
+      River.new(null)
+      .job('g', 1, function (j) { j.finish('one'); })
+      .job('g', 2, function (j) { j.finish('dos'); })
+      .job('g', 3, function (j) { j.finish('tres'); })
+      .run(function (j) {
+        var r = j.river;
+        assert.equal(r.reply_for('g', 1), 'one');
+        assert.equal(r.reply_for('g', 2), 'dos');
+        assert.equal(r.reply_for('g', 3), 'tres');
+      });
+    });
+  }); // === end desc
+
 }); // === describe

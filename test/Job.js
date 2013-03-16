@@ -147,7 +147,7 @@ describe( 'Job', function () {
       process.nextTick(function () {
         r.run();
       });
-      
+
     });
   }); // === end desc
 
