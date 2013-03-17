@@ -39,7 +39,7 @@ describe( 'River', function () {
 
     });
 
-    it( 'throws Error if no error handler defined', function () {
+    it( 'throws Error if no error callback defined', function () {
       var results = [];
       var r = River.new(null);
       r
@@ -54,6 +54,27 @@ describe( 'River', function () {
         assert.equal(e.type + ': ' + e.message, 'something: done');
       })
       .run();
+    });
+
+    it( 'throws Error if no error callback defined, yet finish callback defined', function (done) {
+      var results = [];
+      var r = River.new(null)
+      .job('throw', 'done', function (j) {
+
+        var e = null;
+        try {
+          j.finish('something', 'done');
+        } catch(err) {
+          e = err;
+        }
+
+        assert.equal(e.type + ': ' + e.message, 'something: done');
+        done();
+      });
+
+      process.nextTick(function () {
+        r.run(function () { should_be_reached(); });
+      });
     });
 
     it( 'passes last value to on_finish callbacks', function () {
