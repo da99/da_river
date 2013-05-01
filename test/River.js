@@ -73,10 +73,37 @@ describe( 'River', function () {
       });
 
       process.nextTick(function () {
-        r.run(function () { should_be_reached(); });
+        r.run(function () { should_not_be_reached(); });
       });
     });
 
+    it( 'throws Error if no error callback defined, yet finish callback defined and inherited job', function (done) {
+      var results = [];
+      var r = River.new(null)
+      .job('throw', 'done', function (j) {
+
+        River.new(j)
+        .job(function (new_j) {
+          River.new(new_j)
+          .job(function (new_new_j) {
+            var e = null;
+            try {
+              new_new_j.finish('something', 'done');
+            } catch(err) {
+              e = err;
+            }
+
+            assert.equal(e.type + ': ' + e.message, 'something: done');
+            done();
+          }).run(function () { should_not_be_reached(); });
+        })
+        .run(function () { should_not_be_reached(); });
+      });
+
+      process.nextTick(function () {
+        r.run(function () { should_not_be_reached(); });
+      });
+    });
     it( 'passes last value to on_finish callbacks', function () {
       var result = "none";
       River.new(null)
