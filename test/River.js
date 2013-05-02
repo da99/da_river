@@ -407,39 +407,53 @@ describe( 'River', function () {
     });
 
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
-     River.new(null)
-     .next('not_found', function (j) {
+      River.new(null)
+      .next('not_found', function (j) {
         assert.equal(j.job.error.message, "Customer, 1, not found.");
         done();
-     })
-     .job_must_find('Customer', 1, function (j) {
-       process.nextTick(function () {
-         j.finish(false);
-       });
-     }).run();
+      })
+      .job_must_find('Customer', 1, function (j) {
+        process.nextTick(function () {
+          j.finish(false);
+        });
+      }).run();
     });
 
     it( 'finishes with error not_found if reply is: [].length === 0', function (done) {
-     River.new(null)
-     .next('not_found', function (j) {
+      River.new(null)
+      .next('not_found', function (j) {
         assert.equal(j.job.error.message, "At least one reply required. Value: []");
         done();
-     })
-     .job_must_find(function (j) {
-       process.nextTick(function () {
-         j.finish([]);
-       });
-     }).run();
+      })
+      .job_must_find(function (j) {
+        process.nextTick(function () {
+          j.finish([]);
+        });
+      }).run();
     });
 
     it( 'finishs with reply if reply: !!reply === true', function () {
-     var r = River.new(null)
-     .job_must_find(function (j) {
-       j.finish("hoppe");
-     }).run();
-     assert.equal(r.last_reply(), 'hoppe');
+      var r = River.new(null)
+      .job_must_find(function (j) {
+        j.finish("hoppe");
+      }).run();
+      assert.equal(r.last_reply(), 'hoppe');
     });
 
+    it( 'passes last reply value to callback', function (done) {
+      var r = River.new(null)
+      .job(function (j) {
+        j.finish(9);
+      })
+      .job_must_find(function (j, last) {
+        assert.equal(last, 9);
+        done();
+      });
+
+      process.nextTick(function () {
+        r.run();
+      });
+    });
   }); // === end desc
 
   describe( '.first_reply', function () {
