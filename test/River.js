@@ -491,6 +491,17 @@ describe( 'River', function () {
         assert.equal(r.reply_for('g', 3), 'tres');
       });
     });
+
+    it( 'returns first value for group if no id specified', function () {
+      River.new(null)
+      .job('g', 1, function (j) { j.finish('one'); })
+      .job('g', 2, function (j) { j.finish('dos'); })
+      .job('g', 3, function (j) { j.finish('tres'); })
+      .run(function (j) {
+        var r = j.river;
+        assert.deepEqual(r.reply_for('g'), 'one');
+      });
+    });
   }); // === end desc
 
   describe( '.replys_for', function () {
