@@ -281,7 +281,6 @@ describe( 'River', function () {
           .job(function (j) {
             ++val;
             top_j.finish('error', 'reached');
-            top_j.finish(val);
             j.finish(val);
           })
           .job(function (j) { ++val; })
@@ -296,7 +295,7 @@ describe( 'River', function () {
       }
 
       assert.deepEqual(vals(b.replys), [1]);
-      assert.equal(err.message, "Job already finished: no group 2");
+      assert.equal(err.message, "Ancestor already finished: 2");
     });
 
 
