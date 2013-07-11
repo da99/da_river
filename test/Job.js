@@ -74,6 +74,22 @@ describe( 'Job', function () {
       .run();
       assert.equal(results.message, 'This is error.');
     });
+
+    it( 'throws error if finish is called more than once', function () {
+      var results = null;
+      var err = null;
+      try {
+        River.new(null)
+        .job('1', 'a', function (j) {
+          j.finish(1);
+          j.finish(2);
+        })
+        .run();
+      } catch (e) {
+        err = e;
+      }
+      assert.equal(err.message, 'Job already finished: 1 a');
+    });
   }); // === end desc
 
   describe( 'job .reply', function () {

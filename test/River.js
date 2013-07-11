@@ -262,35 +262,41 @@ describe( 'River', function () {
       .run();
     });
 
-    it( 'stops finishing if any ancesotors have stopped in error', function () {
+    it( 'raises error if any ancesotors have stopped', function () {
       var val = 0;
+      var err = null;
 
       var b = River.new(null)
-      .set('error', function (err) {
-        ++val;
-      })
-      .job(function (j) {
-        ++val;
-        j.finish(val);
-      })
-      .job(function (top_j) {
-
-        var a = River.new(top_j)
+      try {
+        b.set('error', function (err) {
+          ++val;
+        })
         .job(function (j) {
           ++val;
-          top_j.finish('error', 'reached');
-          top_j.finish(val);
           j.finish(val);
         })
-        .job(function (j) { ++val; })
+        .job(function (top_j) {
+
+          var a = River.new(top_j)
+          .job(function (j) {
+            ++val;
+            top_j.finish('error', 'reached');
+            top_j.finish(val);
+            j.finish(val);
+          })
+          .job(function (j) { ++val; })
+          .run();
+
+          assert.equal(a.replys.length, 0);
+
+        })
         .run();
-
-        assert.equal(a.replys.length, 0);
-
-      })
-      .run();
+      } catch (e) {
+        err = e;
+      }
 
       assert.deepEqual(vals(b.replys), [1]);
+      assert.equal(err.message, "Job already finished: no group 2");
     });
 
 
