@@ -1,6 +1,6 @@
 {
   "name": "da_river",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Async flow control. Not ready for public consumption.",
   "main": "lib/River.js",
   "scripts": {
