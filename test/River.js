@@ -199,7 +199,7 @@ describe( 'River', function () {
       var results = [];
       var r = River.new(null);
       r
-      .next('invalid', function (j) {
+      .on_next('invalid', function (j) {
         assert.equal(j.job.error.message, 'don');
         assert.equal(j.job.is_job, true);
         d();
@@ -400,7 +400,7 @@ describe( 'River', function () {
 
     it( 'uses job group and id (when specified) in error message', function (done) {
       River.new(null)
-      .next('not_found', function (j) {
+      .on_next('not_found', function (j) {
         assert.equal(j.job.error.message, "Customer, 451, not found.");
         done();
       })
@@ -413,7 +413,7 @@ describe( 'River', function () {
 
     it( 'finishes with error not_found if reply is: !reply == true', function (done) {
       River.new(null)
-      .next('not_found', function (j) {
+      .on_next('not_found', function (j) {
         assert.equal(j.job.error.message, "Customer, 1, not found.");
         done();
       })
@@ -426,7 +426,7 @@ describe( 'River', function () {
 
     it( 'finishes with error not_found if reply is: [].length === 0', function (done) {
       River.new(null)
-      .next('not_found', function (j) {
+      .on_next('not_found', function (j) {
         assert.equal(j.job.error.message, "At least one reply required. Value: []");
         done();
       })

@@ -17,7 +17,7 @@ describe( 'Job', function () {
       .job('runs', 1, function (j) { j.finish(j.id); })
       .job('runs', 2, function (j) { j.finish(j.id) })
 
-      .next('invalid', function (j) {
+      .on_next('invalid', function (j) {
         assert(j.job.error.message, 3);
       })
 
