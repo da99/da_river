@@ -437,7 +437,7 @@ describe( 'River', function () {
       }).run();
     });
 
-    it( 'finishs with reply if reply: !!reply === true', function () {
+    it( 'finishs and saves reply if reply is "truthy"', function () {
       var r = River.new(null)
       .job_must_find(function (j) {
         j.finish("hoppe");

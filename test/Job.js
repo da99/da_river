@@ -92,62 +92,6 @@ describe( 'Job', function () {
     });
   }); // === end desc
 
-  describe( 'job .reply', function () {
-
-    it( 'runs function before finish function', function () {
-      var r = [];
-      River.new(null)
-      .job(function (j) {
-        j.reply(function (j, result) {
-          r.push(result);
-          return j.finish(2);
-        });
-
-        j.finish(1);
-      }).run();
-
-      assert.deepEqual(r, [1]);
-    });
-
-    it( 'saves each value to replys Array', function () {
-      var r = [];
-
-      River.new(null)
-
-      .job(function (j) {
-
-        j.reply(function (j, result) {
-          r.push(result);
-          return j.finish(2);
-        });
-
-        j.finish(1);
-      })
-
-      .job(function (j, last) { r.push(last); })
-      .run();
-
-      assert.deepEqual(r, [1, 2]);
-    });
-  }); // === end desc
-
-  it( 'stops running any reply callbacks once error is found', function (done) {
-    var r = River.new(null)
-    .next('not_found', function (j) {
-      assert.equal(j.job.error.message, "C")
-      done();
-    })
-    .job_must_find(function (j) {
-      j.reply(function (j) { throw new Error("Should not be reached."); });
-      j.reply(function (j) { j.finish('not_found', "C"); });
-      j.reply(function (j) { j.finish(undefined); });
-      j.reply(function (j) { j.finish("a"); });
-      j.finish("0");
-    });
-
-    process.nextTick(function () { r.run(); });
-  });
-
   describe( 'error callbacks', function () {
 
     it( 'passes error to callback as 2nd argument', function (done) {
